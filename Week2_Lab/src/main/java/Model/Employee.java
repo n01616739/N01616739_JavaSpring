@@ -1,53 +1,64 @@
 package Model;
 
-import java.io.Serializable;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-public class Employee implements Serializable {
-    private Integer id;
-    private String name;
-    private String department;
-    private Double salary;
+public class Employee {
 
-    // Constructors
-    public Employee() {}
+    private int id;  // Added ID field
 
-    public Employee(Integer id, String name, String department, Double salary) {
+    @NotBlank(message = "First Name is required")
+    @Size(min = 5, max = 20, message = "First Name must be between 5 and 20 characters")
+    private String firstName;
+
+    @NotBlank(message = "Last Name is required")
+    private String lastName;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    private String email;
+
+    public Employee() {
+    }
+
+    public Employee(int id, String firstName, String lastName, String email) {
         this.id = id;
-        this.name = name;
-        this.department = department;
-        this.salary = salary;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
     }
 
     // Getters and Setters
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getDepartment() {
-        return department;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public Double getSalary() {
-        return salary;
+    public String getEmail() {
+        return email;
     }
 
-    public void setSalary(Double salary) {
-        this.salary = salary;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

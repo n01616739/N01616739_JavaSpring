@@ -3,73 +3,58 @@ package controllers;
 import Model.Employee;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
-@RequestMapping("/employees")  // <-- Ensure this is set correctly
+@RequestMapping("/employees")
 public class EmployeeController {
 
-    private List<Employee> employees = new ArrayList<>();
+    private final List<Employee> employeeList = new ArrayList<>();
+    private int employeeIdCounter = 1; // Simulating ID generation
 
-    public EmployeeController() {
-        employees.add(new Employee(1, "John Doe", "IT", 60000.0));
-        employees.add(new Employee(2, "Jane Smith", "HR", 55000.0));
-    }
-
-    @GetMapping
-    public String getAllEmployees(Model model) {
-        model.addAttribute("employees", employees);
-        return "employee-list";  // <-- Ensure this matches the template name
-    }
-
-    @GetMapping("/add")
-    public String addEmployeeForm(Model model) {
+    @GetMapping("/form")
+    public String showEmployeeForm(Model model) {
         model.addAttribute("employee", new Employee());
-        return "employee-form";  // <-- Ensure this matches the template name
-    }
-
-    @PostMapping("/add")
-    public String addEmployee(@ModelAttribute Employee employee) {
-        employees.add(employee);
-        return "redirect:/employees";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String editEmployeeForm(@PathVariable("id") Integer id, Model model) {
-        Employee employee = employees.stream()
-                .filter(e -> e.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (employee == null) {
-            return "redirect:/employees"; // Redirect if employee not found
-        }
-
-        model.addAttribute("employee", employee);
         return "employee-form";
     }
 
-
-
-    @PostMapping("/edit/{id}")
-    public String editEmployee(@PathVariable("id") Integer id, @ModelAttribute Employee updatedEmployee) {
-        for (Employee e : employees) {
-            if (e.getId().equals(id)) {
-                e.setName(updatedEmployee.getName());
-                e.setDepartment(updatedEmployee.getDepartment());
-                e.setSalary(updatedEmployee.getSalary());
-                break;
-            }
+    @PostMapping("/save")
+    public String saveEmployee(@Valid @ModelAttribute Employee employee, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "employee-form";
         }
-        return "redirect:/employees";
+        if (employee.getId() == 0) {
+            employee.setId(employeeIdCounter++);
+            employeeList.add(employee);
+        } else {
+            employeeList.replaceAll(emp -> emp.getId() == employee.getId() ? employee : emp);
+        }
+        return "redirect:/employees/list";
+    }
+
+    @GetMapping("/list")
+    public String listEmployees(Model model) {
+        model.addAttribute("employees", employeeList);
+        return "employee-list";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editEmployee(@PathVariable int id, Model model) {
+        Optional<Employee> employee = employeeList.stream().filter(emp -> emp.getId() == id).findFirst();
+        employee.ifPresent(value -> model.addAttribute("employee", value));
+        return "employee-form";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteEmployee(@PathVariable Integer id) {
-        employees.removeIf(e -> e.getId().equals(id));
-        return "redirect:/employees";
+    public String deleteEmployee(@PathVariable int id) {
+        employeeList.removeIf(emp -> emp.getId() == id);
+        return "redirect:/employees/list";
     }
 }
+
