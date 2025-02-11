@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan(basePackages = "controllers")  // Ensure controllers are scanne
+//@ComponentScan(basePackages = "controllers")  // Ensure controllers are scanne
 @SpringBootApplication
 public class Week2LabApplication {
 
