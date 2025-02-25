@@ -17,7 +17,7 @@ import java.util.Optional;
 public class StudentController {
 
     @Autowired
-    private StudentService studentService;
+    private StudentService StudentService;
 
     @Autowired
     private CourseService courseService;
@@ -25,7 +25,7 @@ public class StudentController {
     // Display student dashboard
     @GetMapping("/dashboard")
     public String studentDashboard(@RequestParam("id") Long studentId, Model model) {
-        Optional<Student> studentOpt = studentService.getStudentById(studentId);
+        Optional<Student> studentOpt = StudentService.getStudentById(studentId);
 
         if (studentOpt.isEmpty()) {
             model.addAttribute("error", "Student not found!");
@@ -47,7 +47,7 @@ public class StudentController {
                                     @RequestParam("email") String email,
                                     @RequestParam("address") String address,
                                     Model model) {
-        Optional<Student> studentOpt = studentService.getStudentById(studentId);
+        Optional<Student> studentOpt = StudentService.getStudentById(studentId);
         if (studentOpt.isEmpty()) {
             model.addAttribute("error", "Student not found!");
             return "student_dashboard";
@@ -57,7 +57,7 @@ public class StudentController {
         student.setName(name);
         student.setEmail(email);
         student.setAddress(address);
-        studentService.updateStudent(student);
+        StudentService.updateStudent(student);
 
         model.addAttribute("success", "Profile updated successfully!");
         return "redirect:/student/dashboard?id=" + studentId;
@@ -68,7 +68,7 @@ public class StudentController {
     public String enrollInCourse(@RequestParam("studentId") Long studentId,
                                  @RequestParam("courseId") Long courseId,
                                  Model model) {
-        studentService.enrollInCourse(studentId, courseId);
+        StudentService.enrollInCourse(studentId, courseId);
         model.addAttribute("success", "Enrolled in course successfully!");
         return "redirect:/student/dashboard?id=" + studentId;
     }
@@ -78,7 +78,7 @@ public class StudentController {
     public String dropCourse(@RequestParam("studentId") Long studentId,
                              @RequestParam("courseId") Long courseId,
                              Model model) {
-        studentService.dropCourse(studentId, courseId);
+        StudentService.dropCourse(studentId, courseId);
         model.addAttribute("success", "Dropped course successfully!");
         return "redirect:/student/dashboard?id=" + studentId;
     }

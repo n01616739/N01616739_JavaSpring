@@ -25,6 +25,12 @@ public class AuthController {
     @Autowired
     private StudentRepository studentRepository;
 
+
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "login";  
+    }
+
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password, Model model) {
         Optional<User> user = userRepository.findByUsername(username);
