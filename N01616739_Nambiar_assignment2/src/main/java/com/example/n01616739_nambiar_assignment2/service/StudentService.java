@@ -4,6 +4,8 @@ import com.example.n01616739_nambiar_assignment2.model.Student;
 import com.example.n01616739_nambiar_assignment2.model.Course;
 import com.example.n01616739_nambiar_assignment2.repository.StudentRepository;
 import com.example.n01616739_nambiar_assignment2.repository.CourseRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -13,6 +15,8 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     @Autowired
     private StudentRepository studentRepository;
 
@@ -21,6 +25,8 @@ public class StudentService {
 
     // Get all students
     public List<Student> getAllStudents() {
+        logger.info("Fetching all students from database.");
+
         return studentRepository.findAll();
     }
 
@@ -33,6 +39,8 @@ public class StudentService {
     public void updateStudent(Student student) {
         student.setModifiedDate(LocalDateTime.now());
         studentRepository.save(student);
+        logger.info("Updated student details: ID={}, Name={}", student.getId(), student.getName());
+
     }
 
     // Enroll student in a course
@@ -48,6 +56,11 @@ public class StudentService {
             student.setModifiedDate(LocalDateTime.now());
 
             studentRepository.save(student);
+            logger.info("Student ID {} enrolled in course {}", studentId, course.getCourseName());
+
+        }
+        else {
+            logger.warn("Enrollment failed: Student ID {} or Course ID {} not found", studentId, courseId);
         }
     }
 
