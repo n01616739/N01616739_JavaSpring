@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Dashboard | Student Management System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <h2>Welcome, <span th:text="${student.name}"></span>!</h2>
+
+    <!-- Success & Error Messages -->
+    <p class="success" th:if="${success}" th:text="${success}"></p>
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+
+    <!-- Student Profile Update Form -->
+    <h3>Update Personal Information</h3>
+    <form action="/student/update" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <input type="hidden" name="id" th:value="${student.id}">
+
+        <label>Name:</label>
+        <input type="text" name="name" th:value="${student.name}" required>
+
+        <label>Email:</label>
+        <input type="email" name="email" th:value="${student.email}" required>
+
+        <label>Address:</label>
+        <input type="text" name="address" th:value="${student.address}">
+
+        <button type="submit">Update</button>
+    </form>
+
+    <!-- Available Courses Section -->
+    <h3>Available Courses</h3>
+    <table>
+        <tr>
+            <th>Course Name</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="course : ${availableCourses}">
+            <td th:text="${course.courseName}"></td>
+            <td>
+                <form action="/student/enroll" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" name="studentId" th:value="${student.id}">
+                    <input type="hidden" name="courseId" th:value="${course.id}">
+                    <button type="submit">Enroll</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Enrolled Courses Section -->
+    <h3>Your Enrolled Courses</h3>
+    <table>
+        <tr>
+            <th>Course Name</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="course : ${student.courses}">
+            <td th:text="${course.courseName}"></td>
+            <td>
+                <form action="/student/drop" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" name="studentId" th:value="${student.id}">
+                    <input type="hidden" name="courseId" th:value="${course.id}">
+                    <button type="submit">Drop</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Logout -->
+    <a href="/auth/logout">Logout</a>
+</div>
+</body>
+</html>
